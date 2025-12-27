@@ -1,0 +1,7 @@
+summary: Example of a return for a single product.
+value:
+    productName: "X-Burger"
+    category: "BURGER"
+    price: 0.01
+    description: "Product Description"
+    imagesUrls: ["http://example.com/image1.jpg"]

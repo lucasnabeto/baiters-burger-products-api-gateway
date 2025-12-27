@@ -1,2 +1,3 @@
 # baiters-burger-products-api-gateway
-OpenAPI Specification and integration rules for Baiters Burger product management's API Gateway.
+
+OpenAPI Specification and integration rules for Baiters Burger Products product management's API Gateway.

@@ -1,0 +1,7 @@
+summary: Example of body to create a new product
+value:
+    productName: "Produto 23"
+    category: "BURGER"
+    price: 100.00
+    description: "burger 2 example"
+    imagesUrls: ["http://example.com/image1.jpg"]

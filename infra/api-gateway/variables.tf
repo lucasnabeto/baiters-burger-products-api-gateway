@@ -1,7 +1,7 @@
 variable "project_name" {
   description = "Nome do projeto, usado para nomear os recursos."
   type        = string
-  default     = "baitersburguer-products"
+  default     = "baitersburger-products"
 }
 
 variable "alb_arn" {

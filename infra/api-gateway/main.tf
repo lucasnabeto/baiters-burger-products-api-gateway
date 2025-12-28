@@ -3,7 +3,7 @@ resource "aws_api_gateway_rest_api" "api" {
   description = "API para o sistema Baiters Burger Products"
 
   body = templatefile("${path.module}/openapi-bundled.yaml", {
-    # vpc_link_id           = aws_apigatewayv2_vpc_link.ecs_alb_vpclink_v2.id
+    # vpc_link_id           = aws_api_gateway_vpc_link.ecs_alb_link.id
     alb_dns_name          = var.alb_dns_name
     lambda_authorizer_arn = data.aws_lambda_function.existing_lambda_authorizer.arn
   })
@@ -46,16 +46,6 @@ resource "aws_lambda_permission" "api_gateway_authorizer_invoke" {
 #   target_arns = [var.alb_arn]
 
 #   tags = {
-#     Project = var.project_name
-#   }
-# }
-
-# resource "aws_apigatewayv2_vpc_link" "ecs_alb_vpclink_v2" {
-#   name        = "${var.project_name}-vpc-link"
-#   security_group_ids = [data.aws_security_group.alb_sg.id]
-#   subnet_ids         = data.aws_subnets.all_default_subnets.ids
-
-#    tags = {
 #     Project = var.project_name
 #   }
 # }

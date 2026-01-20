@@ -1,0 +1,12 @@
+summary: Example of a return value for a product list.
+value:
+    - productName: "X-Burger"
+      category: "BURGER"
+      price: 0.01
+      description: "Product Description"
+      imagesUrls: ["http://example.com/image1.jpg"]
+    - productName: "X-Everything"
+      category: "BURGER"
+      price: 0.01
+      description: "Product Description"
+      imagesUrls: ["http://example.com/image1.jpg"]

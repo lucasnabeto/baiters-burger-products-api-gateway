@@ -1,0 +1,183 @@
+openapi: "3.0.4"
+info:
+    title: "Baiters Burger Products API"
+    description: "API to manage Baiters Burger products."
+    version: "1.0.0"
+
+x-amazon-apigateway-request-validator: "all"
+
+tags:
+    - name: "Products"
+
+paths:
+    /api/v1/products:
+        post:
+            tags: [Products]
+            summary: "Register a new product."
+            security:
+                - LambdaJWTAuthorizer: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ProductInput"
+                        examples:
+                            default:
+                                $ref: "#/components/examples/NewProduct"
+            responses:
+                "201":
+                    description: "Product created successfully"
+            x-amazon-apigateway-integration:
+                type: "http_proxy"
+                httpMethod: "POST"
+                uri: "http://${alb_dns_name}/api/v1/products"
+                connectionType: "INTERNET"
+                passthroughBehavior: "when_no_match"
+        get:
+            tags: [Products]
+            summary: "List products by category"
+            security:
+                - LambdaJWTAuthorizer: []
+            parameters:
+                - name: "category"
+                  in: "query"
+                  required: false
+                  schema:
+                      type: "string"
+                      enum: [BURGER, SIDE_DISH, DRINK, DESSERT]
+            responses:
+                "200":
+                    description: "List of products"
+                    content:
+                        application/json:
+                            schema:
+                                type: "array"
+                                items:
+                                    $ref: "#/components/schemas/Product"
+                            examples:
+                                default:
+                                    $ref: "#/components/examples/ProductListResponse"
+            x-amazon-apigateway-integration:
+                type: "http_proxy"
+                httpMethod: "GET"
+                uri: "http://${alb_dns_name}/api/v1/products"
+                connectionType: "INTERNET"
+                passthroughBehavior: "when_no_match"
+
+    /api/v1/products/{product_id}:
+        get:
+            tags: [Products]
+            summary: "Search a product by ID"
+            security:
+                - LambdaJWTAuthorizer: []
+            parameters:
+                - name: "product_id"
+                  in: "path"
+                  required: true
+                  schema:
+                      type: "string"
+            responses:
+                "200":
+                    description: "Product data"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Product"
+                            examples:
+                                default:
+                                    $ref: "#/components/examples/ProductResponse"
+            x-amazon-apigateway-integration:
+                type: "http_proxy"
+                httpMethod: "GET"
+                uri: "http://${alb_dns_name}/api/v1/products/{product_id}"
+                connectionType: "INTERNET"
+                passthroughBehavior: "when_no_match"
+                requestParameters:
+                    integration.request.path.product_id: "method.request.path.product_id"
+        put:
+            tags: [Products]
+            summary: "Update an existing product"
+            security:
+                - LambdaJWTAuthorizer: []
+            parameters:
+                - name: "product_id"
+                  in: "path"
+                  required: true
+                  schema:
+                      type: "string"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ProductInput"
+                        examples:
+                            default:
+                                $ref: "#/components/examples/NewProduct"
+            responses:
+                "200":
+                    description: "Product updated successfully"
+            x-amazon-apigateway-integration:
+                type: "http_proxy"
+                httpMethod: "PUT"
+                uri: "http://${alb_dns_name}/api/v1/products/{product_id}"
+                connectionType: "INTERNET"
+                passthroughBehavior: "when_no_match"
+                requestParameters:
+                    integration.request.path.product_id: "method.request.path.product_id"
+        delete:
+            tags: [Products]
+            summary: "Delete an existing product"
+            security:
+                - LambdaJWTAuthorizer: []
+            parameters:
+                - name: "product_id"
+                  in: "path"
+                  required: true
+                  schema:
+                      type: "string"
+            responses:
+                "204":
+                    description: "Product deleted successfully"
+            x-amazon-apigateway-integration:
+                type: "http_proxy"
+                httpMethod: "DELETE"
+                uri: "http://${alb_dns_name}/api/v1/products/{product_id}"
+                connectionType: "INTERNET"
+                passthroughBehavior: "when_no_match"
+                requestParameters:
+                    integration.request.path.product_id: "method.request.path.product_id"
+
+components:
+    schemas:
+        Product:
+            $ref: "./schemas/Product.yaml"
+
+        ProductInput:
+            $ref: "./schemas/ProductInput.yaml"
+
+    examples:
+        NewProduct:
+            $ref: "./examples/NewProduct.yaml"
+
+        ProductResponse:
+            $ref: "./examples/ProductResponse.yaml"
+
+        ProductListResponse:
+            $ref: "./examples/ProductListResponse.yaml"
+
+    x-amazon-apigateway-request-validators:
+        all:
+            validateRequestBody: true
+            validateRequestParameters: true
+
+    securitySchemes:
+        LambdaJWTAuthorizer:
+            type: "apiKey"
+            name: "Authorization"
+            in: "header"
+            x-amazon-apigateway-authtype: "custom"
+            x-amazon-apigateway-authorizer:
+                type: "token"
+                authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${lambda_authorizer_arn}/invocations"
